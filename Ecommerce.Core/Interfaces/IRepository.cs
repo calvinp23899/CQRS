@@ -8,7 +8,7 @@ namespace Ecommerce.Core.Interfaces
         Task<IQueryable<T>> GetAllAsync(bool? isGetAll = false);
         Task<IQueryable<T>> SearchAsync(Expression<Func<T, bool>>? filter = null, bool? isGetAll = false);
         Task<T?> GetByIdAsync(int id, List<string>? relatedProperties = null, bool? isGetAll = false);
-        Task InsertAsync(T entity);
+        Task<T> InsertAsync(T entity);
         Task UpdateAsync(T entity);
         Task SoftDeletedAsync(int id);
         Task HardDeleteAsync(int id);

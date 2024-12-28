@@ -14,7 +14,9 @@ namespace Ecommerce.API.AutoMapper
 
             CreateMap<User, UserDetailDTO>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Firstname));
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username))
+                .ForMember(dest => dest.Fullname, opt => opt.MapFrom(src => src.Firstname + " "  + src.Lastname));
 
 
         }

@@ -82,7 +82,7 @@ namespace Ecommerce.Infrastructure.Repository
             });
         }
 
-        public async Task InsertAsync(T entity)
+        public async Task<T> InsertAsync(T entity)
         {
             await Task.Run(() =>
             {
@@ -91,6 +91,8 @@ namespace Ecommerce.Infrastructure.Repository
                 entity.IsDeleted = false;
                 _dbSet.Add(entity);
             });
+            await SaveAsync();
+            return entity;
         }
 
         public async Task SaveAsync()
