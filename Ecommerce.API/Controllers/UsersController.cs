@@ -1,8 +1,9 @@
-﻿using Ecommerce.Business.Commands.User;
+﻿using Ecommerce.Business.Commands.Users;
+using Ecommerce.Business.Models.Users;
 using Ecommerce.Business.Queries.User;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.API.Controllers
 {
@@ -17,7 +18,7 @@ namespace Ecommerce.API.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet]
+        [HttpGet()]
         public async Task<IActionResult> GetAllUser() 
         {
             var result = await _mediator.Send(new GetUserQuery());
@@ -25,9 +26,17 @@ namespace Ecommerce.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateUserById()
+        public async Task<IActionResult> UpdateUserById([Required] int id, UserUpdateRequest requestUpdate)
         {
-            var result = await _mediator.Send(new UpdateUserCommand());
+            var request = new UpdateUserCommand
+            {
+                Id = id,
+                FirstName = requestUpdate.FirstName,
+                LastName = requestUpdate.LastName,
+                PhoneNumber = requestUpdate.PhoneNumber,
+                Password = requestUpdate.Password,
+            };
+            var result = await _mediator.Send(request);
             return OkResult(result);
         }
 
@@ -35,6 +44,13 @@ namespace Ecommerce.API.Controllers
         public async Task<IActionResult> CreateUser(CreateUserCommand request)
         {
             var result = await _mediator.Send(request);
+            return OkResult(result);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteUser([Required] int id)
+        {
+            var result = await _mediator.Send(new DeleteUserCommand { Id = id});
             return OkResult(result);
         }
     }

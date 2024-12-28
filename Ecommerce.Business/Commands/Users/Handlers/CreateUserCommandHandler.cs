@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace Ecommerce.Business.Commands.User.Handlers
+namespace Ecommerce.Business.Commands.Users.Handlers
 {
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, UserDetailDTO>
     {

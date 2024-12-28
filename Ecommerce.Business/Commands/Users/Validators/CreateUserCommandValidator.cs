@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Business.Commands.User.Validators
+namespace Ecommerce.Business.Commands.Users.Validators
 {
     public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
     {
