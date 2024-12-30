@@ -10,7 +10,11 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Reflection;
 using System.Text;
 
 namespace Ecommerce.API.ServiceExtensions
@@ -30,7 +34,7 @@ namespace Ecommerce.API.ServiceExtensions
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
             var jwtSettings = configuration.GetSection("JwtSettings");
-            var secretKey = Environment.GetEnvironmentVariable("SECRET");
+            var secretKey = jwtSettings["SecretKey"];
             services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -45,9 +49,22 @@ namespace Ecommerce.API.ServiceExtensions
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ClockSkew = TimeSpan.Zero,
-                    ValidIssuer = jwtSettings["validIssuer"],
-                    ValidAudience = jwtSettings["validAudience"],
+                    ValidIssuer = jwtSettings["Issuer"],
+                    ValidAudience = jwtSettings["Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        Console.WriteLine($"Authentication failed: {context.Exception.Message}");
+                        return Task.CompletedTask;
+                    },
+                    OnTokenValidated = context =>
+                    {
+                        Console.WriteLine("Token validated successfully");
+                        return Task.CompletedTask;
+                    }
                 };
             });
         }
@@ -58,6 +75,7 @@ namespace Ecommerce.API.ServiceExtensions
         public static IServiceCollection AddCustomServices(this IServiceCollection services)
         {
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<ITokenService, TokenService>();
             //Add scope services here
             return services;
         }
@@ -85,15 +103,39 @@ namespace Ecommerce.API.ServiceExtensions
         {
             services.Configure<JWTSettings>(configuration.GetSection("JwtSettings"));
         }
+        public static void ConfigSwaggerGen(this IServiceCollection services)
+        {
+            services.AddSwaggerGen(opt =>
+            {
+                opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "JWT Authorization header using the Bearer scheme (Example: 'Bearer 123456abcd')",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    Scheme = "bearer"
+                });
+                opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type=ReferenceType.SecurityScheme,
+                                Id="Bearer"
+                            }
+                        },
+                        new string[]{}
+                    }
+                });
+            });
+        }
+        public static void ConfigAuthorization(this IServiceCollection services)
+        {
+            services.AddAuthorization();
 
-        //public static void ConfigAuthorization(this IServiceCollection services)
-        //{
-        //    services.AddAuthorization(options =>
-        //    {
-        //        options.AddCustomPolicies();
-        //    });
-
-        //    services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
-        //}
+        }
     }
 }
