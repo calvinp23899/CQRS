@@ -24,6 +24,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.AddCustomServices();
 builder.Services.AddSwaggerGen();
+builder.Services.ConfigSwaggerGen();
+builder.Services.ConfigAuthorization();
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {

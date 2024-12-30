@@ -2,6 +2,7 @@
 using Ecommerce.Business.Models.Users;
 using Ecommerce.Business.Queries.User;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
@@ -9,6 +10,7 @@ namespace Ecommerce.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsersController : CustomBaseController
     {
         private readonly IMediator _mediator;
