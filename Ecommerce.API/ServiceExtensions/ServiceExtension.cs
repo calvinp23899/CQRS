@@ -63,6 +63,7 @@ namespace Ecommerce.API.ServiceExtensions
         {
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IUserService, UserService>();
             //Add scope services here
             return services;
         }

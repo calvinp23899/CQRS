@@ -15,13 +15,21 @@ namespace Ecommerce.Infrastructure.Repository
     {
         private readonly EcommerceDbContext _context;
         private readonly DbSet<T> _dbSet;
-        private readonly string _userName;
-
-        public Repository(EcommerceDbContext context, IHttpContextAccessor httpContextAccessor)
+        private readonly IUserService _userService;
+        public Repository(EcommerceDbContext context, IUserService userService)
         {
             _context = context;
             _dbSet = context.Set<T>();
-            //_userName = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value ?? StringConstant.SystemDefault;
+            _userService = userService;
+        }
+
+        public async Task CreateAsync(T entity)
+        {
+            string username = _userService.GetUserName();
+            entity.CreatedBy = username is null ? StringConstant.SystemDefault : username;
+            entity.CreatedDate = DateTime.UtcNow;
+            entity.IsDeleted = false;
+            _context.Set<T>().Add(entity);
         }
 
         public async Task<IQueryable<T>> GetAllAsync(bool? isGetAll = false)
@@ -84,9 +92,10 @@ namespace Ecommerce.Infrastructure.Repository
 
         public async Task<T> InsertAsync(T entity)
         {
+            string username = _userService.GetUserName();
             await Task.Run(() =>
             {
-                entity.CreatedBy = _userName ?? StringConstant.SystemDefault;
+                entity.CreatedBy = username is null ? StringConstant.SystemDefault : username;
                 entity.CreatedDate = DateTime.UtcNow;
                 entity.IsDeleted = false;
                 _dbSet.Add(entity);
@@ -132,10 +141,11 @@ namespace Ecommerce.Infrastructure.Repository
 
         public async Task UpdateAsync(T entity)
         {
+            string username = _userService.GetUserName();
             await Task.Run(() =>
             {
                 entity.UpdatedDate = DateTime.UtcNow;
-                entity.UpdatedBy = _userName ?? StringConstant.SystemDefault;
+                entity.UpdatedBy = username == null ? StringConstant.SystemDefault : username;
                 _dbSet.Attach(entity);
                 _context.Entry(entity).State = EntityState.Modified;
             });

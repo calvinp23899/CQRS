@@ -14,5 +14,7 @@ namespace Ecommerce.Core.Interfaces
         Task HardDeleteAsync(int id);
         Task HardDeleteAllAsync();
         Task SaveAsync();
+        Task CreateAsync(T entity);
+
     }
 }
