@@ -21,6 +21,22 @@ namespace Ecommerce.API.ServiceExtensions
 {
     public static class ServiceExtension
     {
+        public static IServiceCollection AddCustomServices(this IServiceCollection services)
+        {
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IEmailService, EmailService>();
+            //Add scope services here
+            return services;
+        }
+
+        public static void ConfigOptionsPattern(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<JWTSettings>(configuration.GetSection("JwtSettings"));
+            services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
+        }
+
         public static void ConfigureCors(this IServiceCollection services)
         {
             services.AddCors(options =>
@@ -31,6 +47,7 @@ namespace Ecommerce.API.ServiceExtensions
                 .AllowAnyHeader());
             });
         }
+
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
             var jwtSettings = configuration.GetSection("JwtSettings");
@@ -55,26 +72,22 @@ namespace Ecommerce.API.ServiceExtensions
                 };             
             });
         }
+
         public static void ConfigureIISIntegration(this IServiceCollection services)
         {
             services.Configure<IISOptions>(options => { });
         }
-        public static IServiceCollection AddCustomServices(this IServiceCollection services)
-        {
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<IUserService, UserService>();
-            //Add scope services here
-            return services;
-        }
+
         public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<EcommerceDbContext>(opts => opts.UseNpgsql(configuration.GetConnectionString("sqlConnection")));
         }
+        
         public static void ConfigAutoMapper(this IServiceCollection services)
         {
             services.AddAutoMapper(typeof(MappingProfile));
         }
+        
         public static void ConfigMediatR(this IServiceCollection services)
         {
             services.AddValidatorsFromAssembly(typeof(Response<>).Assembly);
@@ -86,11 +99,7 @@ namespace Ecommerce.API.ServiceExtensions
                 cfg.AddOpenBehavior(typeof(TransactionBehavior<,>));
             });
         }
-
-        public static void ConfigOptionsPattern(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.Configure<JWTSettings>(configuration.GetSection("JwtSettings"));
-        }
+        
         public static void ConfigSwaggerGen(this IServiceCollection services)
         {
             services.AddSwaggerGen(opt =>
@@ -120,6 +129,7 @@ namespace Ecommerce.API.ServiceExtensions
                 });
             });
         }
+
         public static void ConfigAuthorization(this IServiceCollection services)
         {
             services.AddAuthorization();

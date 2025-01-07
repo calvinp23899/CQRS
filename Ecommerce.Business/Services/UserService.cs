@@ -22,24 +22,18 @@ namespace Ecommerce.Business.Services
         {
             var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (int.TryParse(userIdClaim, out int userId))
+            if (userIdClaim != null)
             {
-                return userId;
+                return int.Parse(userIdClaim);
             }
-
-            throw new InvalidOperationException("User ID claim is missing or invalid.");
+            return 0;
         }
 
         public string GetUserName()
         {
             var userName = _httpContextAccessor.HttpContext?.User.FindFirst("FullName")?.Value;
 
-            if (!string.IsNullOrWhiteSpace(userName))
-            {
-                return userName;
-            }
-
-            throw new InvalidOperationException("User name claim is missing.");
+            return userName;
         }
     }
 }
