@@ -4,6 +4,7 @@ using Ecommerce.Core.DTOs.User;
 using Ecommerce.Core.Interfaces;
 using Ecommerce.Core.Models;
 using MediatR;
+using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,7 +65,7 @@ namespace Ecommerce.Business.Commands.Orders.Handlers
                 var orderDetails = new OrderDetail
                 {
                     ProductId = product.Id,
-                    Quantity = item.Quantity,
+                    Quantity = ValidateQuantity(item.Quantity, product.Id),
                     ProductName = product.ProductName,
                     UnitPrice = product.UnitPrice,
                 };
@@ -86,6 +87,14 @@ namespace Ecommerce.Business.Commands.Orders.Handlers
                 body,
                 null);
             return true;
+        }
+
+        private int ValidateQuantity(int quantity, int productId)
+        {
+            if (quantity == 0) {
+                throw new ArgumentException($"ProductId = {productId} is having quantity = 0");
+            }
+            return quantity;
         }
     }
 }

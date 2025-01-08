@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.API.Controllers
 {
@@ -36,5 +37,11 @@ namespace Ecommerce.API.Controllers
             return OkResult(result);
         }
 
+        [HttpGet("{id:int}/detail")]
+        public async Task<IActionResult> OrderBillDetail([Required] int id)
+        {
+            var result = await _mediator.Send(new GetOrderDetailQuery { Id = id});
+            return OkResult(result);
+        }
     }
 }
