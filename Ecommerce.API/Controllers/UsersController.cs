@@ -27,6 +27,13 @@ namespace Ecommerce.API.Controllers
             return OkResult(result);
         }
 
+        //[HttpGet("{id:int}/detail")]
+        //public async Task<IActionResult> GetUserDetail([Required] int id)
+        //{
+        //    var result = await _mediator.Send();
+        //    return OkResult(result);
+        //}
+
         [HttpPut]
         public async Task<IActionResult> UpdateUserById([Required] int id, UserUpdateRequest requestUpdate)
         {
@@ -53,6 +60,14 @@ namespace Ecommerce.API.Controllers
         public async Task<IActionResult> DeleteUser([Required] int id)
         {
             var result = await _mediator.Send(new DeleteUserCommand { Id = id});
+            return OkResult(result);
+        }
+
+
+        [HttpGet("{id:int}/order/history")]
+        public async Task<IActionResult> GetAllOrderByUser([Required] int id)
+        {
+            var result = await _mediator.Send(new GetUserOrderHistoryQuery { Id = id });
             return OkResult(result);
         }
     }
