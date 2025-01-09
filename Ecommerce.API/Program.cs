@@ -27,9 +27,15 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
+string env = builder.Environment.EnvironmentName;
+//builder.Configuration
+//    .SetBasePath(Directory.GetCurrentDirectory())
+//    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+//    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+//    .AddEnvironmentVariables();
 
 var app = builder.Build();
-
+app.ApplyMigration();
 if (app.Environment.IsProduction())
     app.UseHsts();
 // Configure the HTTP request pipeline.

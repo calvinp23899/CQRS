@@ -1,4 +1,6 @@
-﻿using Ecommerce.Core.Models;
+﻿using Ecommerce.Core.Constants;
+using Ecommerce.Core.Extensions;
+using Ecommerce.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -74,13 +76,22 @@ namespace Ecommerce.Infrastructure.Configurations
             #endregion
 
             #region SeedData
-            //builder.HasData
-            //    (
-            //        new User
-            //        {
-
-            //        }
-            //    );
+            builder.HasData
+                (
+                    new User
+                    {
+                        Id = 1,
+                        Firstname = "admin",
+                        Lastname = "1",
+                        Username = "admin",
+                        Password = "admin123".EncryptData(),
+                        Email = "coloshopclient1@gmail.com",
+                        PhoneNumber = "0812345555",
+                        CreatedBy = StringConstant.SystemDefault,
+                        CreatedDate = DateTimeOffset.Now,
+                        IsDeleted = false
+                    }
+                );
             #endregion
         }
     }

@@ -1,0 +1,37 @@
+version: '3.4'
+
+networks:
+  ecommerce_network:
+    driver: bridge
+
+services:
+  ecommerce.api:
+    image: ${DOCKER_REGISTRY-}ecommerceapi
+    container_name: ecommerce.api
+    build:
+      context: .
+      dockerfile: Ecommerce.API/Dockerfile
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      CONNECTION_SQL: "Host=ecommerce.database;Port=5432;Database=EcommerceDatabase2;Username=postgres;Password=postgres;"
+    depends_on:
+      - ecommerce.database
+    networks:
+      - ecommerce_network
+
+  ecommerce.database:
+    image: postgres:latest
+    container_name: ecommerce.database
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: EcommerceDatabase2
+    volumes:
+      - ./.containers/products-db:/var/lib/postgresql/data
+    networks:
+      - ecommerce_network
