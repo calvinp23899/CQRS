@@ -42,6 +42,7 @@ namespace Ecommerce.API.AutoMapper
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.TotalOrder, opt => opt.MapFrom(src => src.TotalPrice))
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.CreatedDate))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
                 .ForMember(dest => dest.orderDetails, opt => opt.MapFrom(src => src.OrderDetails))
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.Firstname + " " + src.User.Lastname));
 

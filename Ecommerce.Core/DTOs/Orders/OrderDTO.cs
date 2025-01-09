@@ -11,6 +11,7 @@ namespace Ecommerce.Core.DTOs.Orders
         public int Id { get; set; }
         public string UserName { get; set; }
         public decimal TotalOrder { get; set; }
+        public string Email { get; set; }
         public DateTimeOffset CreatedDate { get; set; }
         public List<OrderDetailDTO> orderDetails { get; set; }
     }
