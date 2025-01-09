@@ -1,9 +1,4 @@
 using Ecommerce.API.ServiceExtensions;
-using Ecommerce.Business.Models;
-using Ecommerce.Core.Interfaces;
-using FluentValidation;
-using FluentValidation.AspNetCore;
-using NLog;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(Environment.GetEnvironmentVariable("SYNCKEY", EnvironmentVariableTarget.Machine));
 builder.Services.ConfigOptionsPattern(builder.Configuration);
 builder.Services.ConfigMediatR();
 builder.Services.ConfigureSqlContext(builder.Configuration);
@@ -24,6 +20,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.AddCustomServices();
 builder.Services.AddSwaggerGen();
+builder.Services.ConfigSwaggerGen();
+builder.Services.ConfigAuthorization();
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {

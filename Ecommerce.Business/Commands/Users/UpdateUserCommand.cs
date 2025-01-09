@@ -7,14 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Business.Commands.User
+namespace Ecommerce.Business.Commands.Users
 {
-    public class CreateUserCommand : CommandRequest, IRequest<UserDetailDTO>
+    public class UpdateUserCommand : CommandRequest, IRequest<bool>
     {
+        public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string Username { get; set; }
+        public string PhoneNumber { get; set; }
         public string Password { get; set; }
-        public string Email { get; set; }
     }
 }

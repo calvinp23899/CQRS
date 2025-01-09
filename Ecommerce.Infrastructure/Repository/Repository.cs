@@ -16,12 +16,19 @@ namespace Ecommerce.Infrastructure.Repository
         private readonly EcommerceDbContext _context;
         private readonly DbSet<T> _dbSet;
         private readonly string _userName;
-
         public Repository(EcommerceDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _dbSet = context.Set<T>();
-            //_userName = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value ?? StringConstant.SystemDefault;
+            _userName = httpContextAccessor.HttpContext.User.FindFirst("FullName")?.Value ?? StringConstant.SystemDefault;
+        }
+
+        public async Task CreateAsync(T entity)
+        {
+            entity.CreatedBy = _userName;
+            entity.CreatedDate = DateTime.UtcNow;
+            entity.IsDeleted = false;
+            _context.Set<T>().Add(entity);
         }
 
         public async Task<IQueryable<T>> GetAllAsync(bool? isGetAll = false)
@@ -82,15 +89,17 @@ namespace Ecommerce.Infrastructure.Repository
             });
         }
 
-        public async Task InsertAsync(T entity)
+        public async Task<T> InsertAsync(T entity)
         {
             await Task.Run(() =>
             {
-                entity.CreatedBy = _userName ?? StringConstant.SystemDefault;
+                entity.CreatedBy = _userName;
                 entity.CreatedDate = DateTime.UtcNow;
                 entity.IsDeleted = false;
                 _dbSet.Add(entity);
             });
+            await SaveAsync();
+            return entity;
         }
 
         public async Task SaveAsync()
@@ -133,7 +142,7 @@ namespace Ecommerce.Infrastructure.Repository
             await Task.Run(() =>
             {
                 entity.UpdatedDate = DateTime.UtcNow;
-                entity.UpdatedBy = _userName ?? StringConstant.SystemDefault;
+                entity.UpdatedBy = _userName;
                 _dbSet.Attach(entity);
                 _context.Entry(entity).State = EntityState.Modified;
             });
